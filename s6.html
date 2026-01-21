@@ -1,0 +1,382 @@
+            // Continuación del código JavaScript anterior...
+
+                    galleryItem.innerHTML = `
+                        <img src="${img.url}" alt="${img.title}" class="gallery-img">
+                        ${badge}
+                        <div class="gallery-item-overlay">
+                            <h3 class="gallery-item-title">${img.title}</h3>
+                            <p class="gallery-item-desc">${img.description}</p>
+                            <div class="gallery-item-actions">
+                                <button class="btn btn-primary use-for-meme" data-id="${img.id}">
+                                    <i class="fas fa-magic"></i> Usar para Meme
+                                </button>
+                                <button class="btn btn-secondary view-image" data-id="${img.id}">
+                                    <i class="fas fa-expand"></i> Ver
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    gallery.appendChild(galleryItem);
+                });
+                
+                // Agregar eventos a los botones de las imágenes
+                document.querySelectorAll('.use-for-meme').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const imgId = parseInt(this.dataset.id);
+                        const img = images.find(i => i.id === imgId);
+                        if (img) {
+                            loadImageToMemeEditor(img.url);
+                            showNotification(`Imagen "${img.title}" cargada en el editor de memes`, "success");
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('.view-image').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const imgId = parseInt(this.dataset.id);
+                        const img = images.find(i => i.id === imgId);
+                        if (img) {
+                            openImageModal(img);
+                        }
+                    });
+                });
+            }
+            
+            // Función para filtrar la galería
+            function filterGallery(event) {
+                const filter = event.target.dataset.filter;
+                currentFilter = filter;
+                
+                // Actualizar botones activos
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+                
+                renderGallery();
+            }
+            
+            // Función para cargar imagen al editor de memes
+            function loadImageToMemeEditor(imageUrl) {
+                const ctx = memeCanvas.getContext('2d');
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.onload = function() {
+                    // Limpiar canvas y dibujar la nueva imagen
+                    ctx.clearRect(0, 0, memeCanvas.width, memeCanvas.height);
+                    ctx.drawImage(img, 0, 0, memeCanvas.width, memeCanvas.height);
+                    uploadedImage = imageUrl;
+                    showNotification("Imagen cargada en el editor. ¡Ahora añade texto y caras!", "success");
+                };
+                img.onerror = function() {
+                    showNotification("Error al cargar la imagen. Intenta con otra.", "error");
+                };
+                img.src = imageUrl;
+            }
+            
+            // Función para abrir imagen en modal
+            function openImageModal(img) {
+                modalImage.src = img.url;
+                modalTitle.textContent = img.title;
+                imageModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Función para cerrar modal
+            function closeModal() {
+                imageModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+            
+            // Función para actualizar valor de tamaño de texto
+            function updateTextSizeValue() {
+                textSizeValue.textContent = textSizeSlider.value;
+            }
+            
+            // Función para actualizar valor de posición X
+            function updateFaceXValue() {
+                faceXValue.textContent = faceXSlider.value;
+            }
+            
+            // Función para actualizar valor de posición Y
+            function updateFaceYValue() {
+                faceYValue.textContent = faceYSlider.value;
+            }
+            
+            // Función para generar meme
+            function generateMeme() {
+                const ctx = memeCanvas.getContext('2d');
+                
+                // Si no hay imagen cargada, usar una por defecto
+                if (!uploadedImage) {
+                    showNotification("Cargando imagen por defecto...", "info");
+                    const defaultImg = new Image();
+                    defaultImg.crossOrigin = "anonymous";
+                    defaultImg.onload = function() {
+                        ctx.clearRect(0, 0, memeCanvas.width, memeCanvas.height);
+                        ctx.drawImage(defaultImg, 0, 0, memeCanvas.width, memeCanvas.height);
+                        drawMemeText(ctx);
+                        showNotification("Meme generado con imagen por defecto", "success");
+                    };
+                    defaultImg.src = "https://images.unsplash.com/photo-1541367777708-7905fe3296c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80";
+                    uploadedImage = defaultImg.src;
+                } else {
+                    const img = new Image();
+                    img.crossOrigin = "anonymous";
+                    img.onload = function() {
+                        ctx.clearRect(0, 0, memeCanvas.width, memeCanvas.height);
+                        ctx.drawImage(img, 0, 0, memeCanvas.width, memeCanvas.height);
+                        drawMemeText(ctx);
+                        showNotification("¡Meme generado exitosamente!", "success");
+                    };
+                    img.src = uploadedImage;
+                }
+            }
+            
+            // Función para dibujar texto en el meme
+            function drawMemeText(ctx) {
+                const topText = topTextInput.value.trim();
+                const bottomText = bottomTextInput.value.trim();
+                const textSize = parseInt(textSizeSlider.value);
+                const textColor = textColorInput.value;
+                
+                ctx.font = `bold ${textSize}px 'Comic Neue', cursive`;
+                ctx.fillStyle = textColor;
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 3;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                
+                // Dibujar texto superior
+                if (topText) {
+                    ctx.strokeText(topText, memeCanvas.width / 2, 20);
+                    ctx.fillText(topText, memeCanvas.width / 2, 20);
+                }
+                
+                // Dibujar texto inferior
+                if (bottomText) {
+                    ctx.strokeText(bottomText, memeCanvas.width / 2, memeCanvas.height - textSize - 20);
+                    ctx.fillText(bottomText, memeCanvas.width / 2, memeCanvas.height - textSize - 20);
+                }
+            }
+            
+            // Función para añadir cara al meme
+            function addFaceToMeme() {
+                if (!faceImage) {
+                    // Si no hay cara cargada, pedir al usuario que suba una
+                    showNotification("Por favor, sube una imagen con una cara primero", "info");
+                    
+                    // Crear input temporal para subir cara
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.style.display = 'none';
+                    
+                    input.onchange = function(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            faceImage = e.target.result;
+                            drawFaceOnMeme();
+                            showNotification("Cara cargada exitosamente. Ahora genera el meme.", "success");
+                        };
+                        reader.readAsDataURL(file);
+                    };
+                    
+                    document.body.appendChild(input);
+                    input.click();
+                    document.body.removeChild(input);
+                } else {
+                    drawFaceOnMeme();
+                }
+            }
+            
+            // Función para dibujar cara en el meme
+            function drawFaceOnMeme() {
+                if (!faceImage) return;
+                
+                const ctx = memeCanvas.getContext('2d');
+                const face = new Image();
+                face.crossOrigin = "anonymous";
+                face.onload = function() {
+                    const x = parseInt(faceXSlider.value);
+                    const y = parseInt(faceYSlider.value);
+                    const size = 100; // Tamaño fijo para la cara
+                    
+                    // Guardar el estado actual del canvas
+                    ctx.save();
+                    
+                    // Crear un círculo para recortar la cara
+                    ctx.beginPath();
+                    ctx.arc(x + size/2, y + size/2, size/2, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.clip();
+                    
+                    // Dibujar la cara
+                    ctx.drawImage(face, x, y, size, size);
+                    
+                    // Restaurar el estado del canvas
+                    ctx.restore();
+                    
+                    showNotification("¡Cara añadida al meme exitosamente!", "success");
+                };
+                face.src = faceImage;
+            }
+            
+            // Función para descargar meme
+            function downloadMeme() {
+                const link = document.createElement('a');
+                link.download = 'meme-sebastishop.png';
+                link.href = memeCanvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showNotification("Meme descargado exitosamente", "success");
+            }
+            
+            // Función para añadir meme a la galería
+            function addMemeToGallery() {
+                const memeDataUrl = memeCanvas.toDataURL('image/png');
+                
+                const newMeme = {
+                    id: images.length + 1,
+                    url: memeDataUrl,
+                    title: `Mi Meme ${images.length + 1}`,
+                    description: `"${topTextInput.value.substring(0, 30)}..."`,
+                    category: "meme",
+                    hasFace: faceImage !== null
+                };
+                
+                images.unshift(newMeme);
+                renderGallery();
+                showNotification("¡Meme añadido a tu galería personal!", "success");
+            }
+            
+            // Función para activar protección
+            function activateProtection() {
+                const protectionBtn = document.getElementById('activateProtection');
+                protectionBtn.classList.add('shake');
+                protectionBtn.innerHTML = '<i class="fas fa-lock"></i> ¡PROTECCIÓN MÁXIMA ACTIVADA!';
+                
+                // Simular proceso de protección
+                showNotification("Activando protección máxima...", "info");
+                
+                setTimeout(() => {
+                    showNotification("✓ Sistema de encriptación activado", "success");
+                }, 500);
+                
+                setTimeout(() => {
+                    showNotification("✓ Protección anti-descargas habilitada", "success");
+                }, 1000);
+                
+                setTimeout(() => {
+                    showNotification("✓ Marcas de agua aplicadas a todas las imágenes", "success");
+                }, 1500);
+                
+                setTimeout(() => {
+                    showNotification("¡PROTECCIÓN COMPLETA! Tus fotos están seguras", "success");
+                    protectionBtn.classList.remove('shake');
+                    protectionBtn.classList.remove('pulse');
+                    protectionBtn.style.backgroundColor = '#00cc66';
+                }, 2000);
+            }
+            
+            // Función para crear efecto de chispas
+            function createSparkleEffect(e) {
+                // Solo crear chispas en algunos elementos
+                if (e.target.tagName === 'BUTTON' || e.target.classList.contains('gallery-item')) {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle';
+                    sparkle.style.width = Math.random() * 20 + 5 + 'px';
+                    sparkle.style.height = sparkle.style.width;
+                    sparkle.style.left = e.pageX + 'px';
+                    sparkle.style.top = e.pageY + 'px';
+                    sparkle.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                    
+                    document.body.appendChild(sparkle);
+                    
+                    // Animar y eliminar
+                    sparkle.animate([
+                        { transform: 'scale(1)', opacity: 1 },
+                        { transform: 'scale(0)', opacity: 0 }
+                    ], {
+                        duration: 600,
+                        easing: 'ease-out'
+                    });
+                    
+                    setTimeout(() => {
+                        sparkle.remove();
+                    }, 600);
+                }
+            }
+            
+            // Función para mostrar notificaciones
+            function showNotification(message, type) {
+                // Crear elemento de notificación
+                const notification = document.createElement('div');
+                notification.style.position = 'fixed';
+                notification.style.top = '20px';
+                notification.style.right = '20px';
+                notification.style.padding = '15px 20px';
+                notification.style.borderRadius = '8px';
+                notification.style.color = 'white';
+                notification.style.fontWeight = 'bold';
+                notification.style.zIndex = '10000';
+                notification.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
+                notification.style.transition = 'transform 0.3s, opacity 0.3s';
+                notification.style.transform = 'translateX(100%)';
+                notification.style.opacity = '0';
+                
+                // Estilo según tipo
+                if (type === 'success') {
+                    notification.style.backgroundColor = '#00cc66';
+                    notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+                } else if (type === 'error') {
+                    notification.style.backgroundColor = '#ff3333';
+                    notification.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+                } else {
+                    notification.style.backgroundColor = '#ffcc00';
+                    notification.style.color = '#000';
+                    notification.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+                }
+                
+                document.body.appendChild(notification);
+                
+                // Animar entrada
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                    notification.style.opacity = '1';
+                }, 10);
+                
+                // Remover después de 3 segundos
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 300);
+                }, 3000);
+            }
+            
+            // Inicializar canvas con imagen por defecto
+            const ctx = memeCanvas.getContext('2d');
+            const defaultImg = new Image();
+            defaultImg.crossOrigin = "anonymous";
+            defaultImg.onload = function() {
+                ctx.drawImage(defaultImg, 0, 0, memeCanvas.width, memeCanvas.height);
+                uploadedImage = defaultImg.src;
+                
+                // Añadir texto por defecto
+                topTextInput.value = "Cuando dices que no te gustan los memes";
+                bottomTextInput.value = "Pero revisas Sebastishop a diario";
+                drawMemeText(ctx);
+            };
+            defaultImg.src = "https://images.unsplash.com/photo-1541367777708-7905fe3296c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80";
+            
+            // Añadir texto de bienvenida
+            showNotification("¡Bienvenido a Sebastishop! Donde hacemos tus fotos bien culeras", "success");
+        });
+    </script>
+</body>
+</html>
