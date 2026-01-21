@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SebastiShop</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #ff4d4d;
+    }
+    input, button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+    }
+    #canvas {
+      margin-top: 20px;
+      max-width: 100%;
+      border: 3px solid #ff4d4d;
+    }
+  </style>
+</head>
+<body>
+  <h1>SebastiShop</h1>
+  <p><strong>Donde hacemos tus fotos más culeras 😈</strong></p>
+
+  <input type="file" accept="image/*" id="upload" />
+  <br />
+  <button onclick="applyFilter('grayscale(100%)')">Blanco y negro</button>
+  <button onclick="applyFilter('blur(4px)')">Borrosa</button>
+  <button onclick="applyFilter('contrast(300%)')">Súper contraste</button>
+  <button onclick="applyFilter('hue-rotate(180deg)')">Colores locos</button>
+  <button onclick="resetFilter()">Resetear</button>
+
+  <br />
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const upload = document.getElementById('upload');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let img = new Image();
+
+    upload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.filter = 'none';
+          ctx.drawImage(img, 0, 0);
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function applyFilter(filter) {
+      if (!img.src) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.filter = filter;
+      ctx.drawImage(img, 0, 0);
+    }
+
+    function resetFilter() {
+      if (!img.src) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.filter = 'none';
+      ctx.drawImage(img, 0, 0);
+    }
+  </script>
+</body>
+</html>
