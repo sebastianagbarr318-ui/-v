@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sebastishop, donde hacemos tus fotos bien culeras</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0b0b0b;
+    color: white;
+}
+
+header {
+    background: #ff0055;
+    padding: 20px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+.section {
+    padding: 30px;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.gallery img {
+    width: 100%;
+    border-radius: 12px;
+    border: 3px solid #222;
+    transition: transform 0.2s;
+}
+
+.gallery img:hover {
+    transform: scale(1.05);
+}
+
+canvas {
+    border: 2px solid #ff0055;
+    margin-top: 10px;
+    max-width: 100%;
+}
+
+footer {
+    background: #111;
+    text-align: center;
+    padding: 15px;
+    font-size: 12px;
+    opacity: 0.6;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+Sebastishop, donde hacemos tus fotos bien culeras
+<div class="subtitle">
+Catálogo público · Fotos propiedad de Sebasti
+</div>
+</header>
+
+<!-- GALERÍA -->
+<div class="section">
+<h2>📸 Mis fotos</h2>
+<p>Estas fotos son del creador del sitio. Puedes verlas, no modificarlas.</p>
+
+<div class="gallery" id="gallery"></div>
+</div>
+
+<!-- MEMES -->
+<div class="section">
+<h2>🔥 Memes populares</h2>
+<p>Selecciona un meme y ponle cara a alguien.</p>
+
+<div class="gallery" id="memes"></div>
+</div>
+
+<!-- EDITOR -->
+<div class="section">
+<h2>😂 Editor de memes culeros</h2>
+
+<input type="file" id="faceUpload" accept="image/*">
+<br><br>
+
+<canvas id="canvas" width="500" height="500"></canvas>
+<br><br>
+
+<button onclick="downloadMeme()">Descargar meme</button>
+</div>
+
+<footer>
+Sebastishop © 2026 · Nada aquí es serio
+</footer>
+
+<script>
+/* ===========================
+   GALERÍA DEL CREADOR
+   =========================== */
+
+const myPhotos = [
+    "https://picsum.photos/500?random=1",
+    "https://picsum.photos/500?random=2",
+    "https://picsum.photos/500?random=3",
+    "https://picsum.photos/500?random=4",
+    "https://picsum.photos/500?random=5"
+];
+
+const gallery = document.getElementById("gallery");
+
+myPhotos.forEach(src => {
+    const img = document.createElement("img");
+    img.src = src;
+    gallery.appendChild(img);
+});
+
+/* ===========================
+   MEMES POPULARES (SIMULADO)
+   =========================== */
+
+const API_KEY = "TU_API_KEY_AQUI"; // SOLO DECORATIVO
+
+const memeTemplates = [
+    "https://i.imgflip.com/1bij.jpg",
+    "https://i.imgflip.com/26am.jpg",
+    "https://i.imgflip.com/30b1gx.jpg",
+    "https://i.imgflip.com/2cp1.jpg"
+];
+
+const memesDiv = document.getElementById("memes");
+let selectedMeme = null;
+
+memeTemplates.forEach(src => {
+    const img = document.createElement("img");
+    img.src = src;
+    img.onclick = () => selectMeme(src);
+    memesDiv.appendChild(img);
+});
+
+/* ===========================
+   EDITOR DE MEMES
+   =========================== */
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+let faceImg = null;
+
+function selectMeme(src) {
+    selectedMeme = new Image();
+    selectedMeme.crossOrigin = "anonymous";
+    selectedMeme.src = src;
+    selectedMeme.onload = draw;
+}
+
+document.getElementById("faceUpload").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    faceImg = new Image();
+    faceImg.src = URL.createObjectURL(file);
+    faceImg.onload = draw;
+});
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (selectedMeme) {
+        ctx.drawImage(selectedMeme, 0, 0, canvas.width, canvas.height);
+    }
+    if (faceImg) {
+        ctx.drawImage(faceImg, 150, 150, 200, 200);
+    }
+}
+
+function downloadMeme() {
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = "meme_culero.png";
+    a.click();
+}
+</script>
+
+</body>
+</html>
