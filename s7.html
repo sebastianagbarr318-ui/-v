@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sebastishop - Donde hacemos tus fotos bien culeras</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #0a0a0a;
+            color: #f0f0f0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .comic-font {
+            font-family: 'Comic Neue', cursive;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #ff0080, #8000ff);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            border-bottom: 5px solid #ffcc00;
+            box-shadow: 0 5px 15px rgba(255, 0, 128, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "✦";
+            position: absolute;
+            font-size: 300px;
+            color: rgba(255, 255, 255, 0.05);
+            top: -100px;
+            left: -50px;
+            transform: rotate(30deg);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .logo-icon {
+            font-size: 2.8rem;
+            color: #ffcc00;
+            filter: drop-shadow(2px 2px 0 #ff0080);
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            color: #fff;
+            text-shadow: 3px 3px 0 #ff0080, 5px 5px 0 #8000ff;
+            letter-spacing: 1px;
+        }
+
+        .tagline {
+            font-size: 1.4rem;
+            color: #ffcc00;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #8000ff;
+            margin-top: 5px;
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Panel de control */
+        .control-panel {
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 3px solid #ff0080;
+            box-shadow: 0 0 20px rgba(255, 0, 128, 0.2);
+        }
+
+        .panel-title {
+            font-size: 1.8rem;
+            color: #ffcc00;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .api-key-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .api-key-input {
+            flex: 1;
+            min-width: 300px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 2px solid #8000ff;
+            background-color: #0f0f0f;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #ff0080, #8000ff);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 0, 128, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: #ffcc00;
+            color: #0a0a0a;
+        }
+
+        .btn-secondary:hover {
+            background-color: #ffdb4d;
+            transform: translateY(-3px);
+        }
+
+        .btn-danger {
+            background-color: #ff3333;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #ff6666;
+        }
+
+        .file-upload-section {
+            background-color: #222;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border: 2px dashed #8000ff;
+        }
+
+        .file-upload-label {
+            display: block;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .file-upload-label:hover {
+            background-color: #444;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: #ff0080;
+            margin-bottom: 10px;
+        }
+
+        .image-preview {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        #previewImage {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            border: 3px solid #ffcc00;
+            display: none;
+        }
+
+        /* Galería */
+        .gallery-section {
+            margin-top: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            color: #ff0080;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0 20px;
+        }
+
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, #ff0080, #8000ff, #ffcc00);
+            border-radius: 2px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background-color: #ff0080;
+            color: white;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 3rem;
+        }
+
+        .gallery-item {
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            border: 2px solid #333;
+            position: relative;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(255, 0, 128, 0.3);
+            border-color: #ff0080;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-item-overlay {
+            padding: 1.2rem;
+        }
+
+        .gallery-item-title {
+            font-size: 1.3rem;
+            color: #ffcc00;
+            margin-bottom: 0.5rem;
+        }
+
+        .gallery-item-desc {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .gallery-item-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #ff0080;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Editor de memes */
+        .meme-editor-section {
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 3rem;
+            border: 3px solid #ffcc00;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.2);
+        }
+
+        .meme-editor-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .meme-canvas-container {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        #memeCanvas {
+            max-width: 100%;
+            border-radius: 10px;
+            border: 3px solid #8000ff;
+            background-color: #0f0f0f;
+        }
+
+        .meme-controls {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffcc00;
+            font-weight: bold;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slider {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background-color: #333;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #ff0080;
+            cursor: pointer;
+        }
+
+        .slider-value {
+            min-width: 40px;
+            text-align: center;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #8000ff;
+            background-color: #0f0f0f;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .meme-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 2rem;
+        }
+
+        /* Protección */
+        .protection-section {
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 3rem;
+            border: 3px solid #ff3333;
+            text-align: center;
+        }
+
+        .protection-icon {
+            font-size: 4rem;
+            color: #ff3333;
+            margin-bottom: 1rem;
+        }
+
+        .protection-text {
+            font-size: 1.2rem;
+            color: #ffcc00;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #111;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+            border-top: 3px solid #8000ff;
+        }
+
+        .footer-logo {
+            font-size: 2.5rem;
+            color: #ff0080;
+            margin-bottom: 1rem;
+        }
+
+        .copyright {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 800px;
+            width: 90%;
+            border: 3px solid #ffcc00;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.8rem;
+            color: #ff0080;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .modal-img {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .meme-editor-container {
+                flex-direction: column;
+            }
+        }
+
+        /* Efectos especiales */
+        .sparkle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 128, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 0, 128, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 128, 0); }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-camera-retro logo-icon"></i>
+            <h1 class="comic-font">SEBASTISHOP</h1>
+        </div>
+        <p class="tagline comic-font">¡Donde hacemos tus fotos bien culeras!</p>
+    </header>
+
+    <div class="container">
+        <!-- Panel de control -->
+        <section class="control-panel">
+            <h2 class="panel-title comic-font">Panel de Control Exclusivo</h2>
+            
+            <div class="api-key-section">
+                <input type="password" id="apiKeyInput" class="api-key-input" placeholder="Ingresa tu API Key para acceder a las imágenes">
+                <button id="saveApiKey" class="btn btn-primary">
+                    <i class="fas fa-key"></i> Guardar API Key
+                </button>
+                <button id="loadDefaultImages" class="btn btn-secondary">
+                    <i class="fas fa-images"></i> Cargar Imágenes Populares
+                </button>
+                <button id="clearGallery" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Limpiar Galería
+                </button>
+            </div>
+
+            <div class="file-upload-section">
+                <label for="imageUpload" class="file-upload-label">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <h3>Sube tu foto para convertirla en meme</h3>
+                    <p>Arrastra o haz clic para seleccionar una imagen</p>
+                </label>
+                <input type="file" id="imageUpload" class="file-input" accept="image/*">
+                
+                <div class="image-preview">
+                    <img id="previewImage" src="" alt="Vista previa">
+                </div>
+            </div>
+        </section>
+
+        <!-- Galería de imágenes -->
+        <section class="gallery-section">
+            <h2 class="section-title comic-font">Catálogo de Fotos "Bien Culeras"</h2>
+            
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">Todas</button>
+                <button class="filter-btn" data-filter="meme">Memes</button>
+                <button class="filter-btn" data-filter="popular">Populares</button>
+                <button class="filter-btn" data-filter="personal">Mis Fotos</button>
+                <button class="filter-btn" data-filter="face">Con Cara</button>
+            </div>
+
+            <div class="gallery" id="imageGallery">
+                <!-- Las imágenes se cargarán aquí dinámicamente -->
+            </div>
+        </section>
+
+        <!-- Editor de memes -->
+        <section class="meme-editor-section">
+            <h2 class="section-title comic-font">Creador de Memes "Bien Culeros"</h2>
+            
+            <div class="meme-editor-container">
+                <div class="meme-canvas-container">
+                    <canvas id="memeCanvas" width="600" height="400"></canvas>
+                </div>
+                
+                <div class="meme-controls">
+                    <div class="control-group">
+                        <label class="control-label">Texto superior del meme:</label>
+                        <input type="text" id="topText" class="text-input" placeholder="Ej: Cuando dices que no te gustan los memes...">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Texto inferior del meme:</label>
+                        <input type="text" id="bottomText" class="text-input" placeholder="Ej: Pero revisas Sebastishop a diario">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Tamaño del texto:</label>
+                        <div class="slider-container">
+                            <input type="range" min="10" max="60" value="30" class="slider" id="textSize">
+                            <span class="slider-value" id="textSizeValue">30</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Color del texto:</label>
+                        <input type="color" id="textColor" value="#ffffff">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Posición de la cara (X):</label>
+                        <div class="slider-container">
+                            <input type="range" min="0" max="500" value="100" class="slider" id="faceX">
+                            <span class="slider-value" id="faceXValue">100</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label class="control-label">Posición de la cara (Y):</label>
+                        <div class="slider-container">
+                            <input type="range" min="0" max="350" value="100" class="slider" id="faceY">
+                            <span class="slider-value" id="faceYValue">100</span>
+                        </div>
+                    </div>
+                    
+                    <div class="meme-buttons">
+                        <button id="generateMeme" class="btn btn-primary">
+                            <i class="fas fa-magic"></i> Generar Meme
+                        </button>
+                        <button id="addFace" class="btn btn-secondary">
+                            <i class="fas fa-user-circle"></i> Añadir Cara al Meme
+                        </button>
+                        <button id="downloadMeme" class="btn btn-secondary">
+                            <i class="fas fa-download"></i> Descargar Meme
+                        </button>
+                        <button id="addToGallery" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Añadir a Galería
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de protección -->
+        <section class="protection-section">
+            <i class="fas fa-shield-alt protection-icon"></i>
+            <h2 class="comic-font">¡PROTECCIÓN ACTIVADA!</h2>
+            <p class="protection-text">Esta galería es EXCLUSIVA. Los demás NO PUEDEN acceder a tus fotos sin tu permiso.</p>
+            <p class="protection-text">Todas las imágenes están protegidas por el sistema de seguridad de Sebastishop.</p>
+            <button id="activateProtection" class="btn btn-danger pulse">
+                <i class="fas fa-lock"></i> Activar Protección Máxima
+            </button>
+        </section>
+    </div>
+
+    <!-- Modal para vista ampliada -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModal">&times;</button>
+            <h2 id="modalTitle"></h2>
+            <img id="modalImage" class="modal-img" src="" alt="Imagen ampliada">
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-logo">
+            <i class="fas fa-camera-retro"></i>
+        </div>
+        <p class="comic-font">SEBASTISHOP - Donde hacemos tus fotos bien culeras</p>
+        <p class="copyright">© 2023 Sebastishop. Todos los derechos reservados. No copies nuestros memes, crea los tuyos.</p>
+    </footer>
+
+    <script>
+        // Variables globales
+        let apiKey = "";
+        let uploadedImage = null;
+        let faceImage = null;
+        let currentFilter = "all";
+        let images = [];
+        
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar elementos del DOM
+            const apiKeyInput = document.getElementById('apiKeyInput');
+            const saveApiKeyBtn = document.getElementById('saveApiKey');
+            const loadDefaultImagesBtn = document.getElementById('loadDefaultImages');
+            const clearGalleryBtn = document.getElementById('clearGallery');
+            const imageUpload = document.getElementById('imageUpload');
+            const previewImage = document.getElementById('previewImage');
+            const gallery = document.getElementById('imageGallery');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const memeCanvas = document.getElementById('memeCanvas');
+            const topTextInput = document.getElementById('topText');
+            const bottomTextInput = document.getElementById('bottomText');
+            const textSizeSlider = document.getElementById('textSize');
+            const textSizeValue = document.getElementById('textSizeValue');
+            const textColorInput = document.getElementById('textColor');
+            const faceXSlider = document.getElementById('faceX');
+            const faceXValue = document.getElementById('faceXValue');
+            const faceYSlider = document.getElementById('faceY');
+            const faceYValue = document.getElementById('faceYValue');
+            const generateMemeBtn = document.getElementById('generateMeme');
+            const addFaceBtn = document.getElementById('addFace');
+            const downloadMemeBtn = document.getElementById('downloadMeme');
+            const addToGalleryBtn = document.getElementById('addToGallery');
+            const activateProtectionBtn = document.getElementById('activateProtection');
+            const imageModal = document.getElementById('imageModal');
+            const closeModalBtn = document.getElementById('closeModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            // Cargar API Key guardada si existe
+            const savedApiKey = localStorage.getItem('sebastishop_api_key');
+            if (savedApiKey) {
+                apiKey = savedApiKey;
+                apiKeyInput.value = "••••••••••••••••••";
+                showNotification("API Key cargada desde almacenamiento local", "success");
+            }
+            
+            // Configurar eventos
+            saveApiKeyBtn.addEventListener('click', saveApiKey);
+            loadDefaultImagesBtn.addEventListener('click', loadDefaultImages);
+            clearGalleryBtn.addEventListener('click', clearGallery);
+            imageUpload.addEventListener('change', handleImageUpload);
+            filterButtons.forEach(btn => btn.addEventListener('click', filterGallery));
+            textSizeSlider.addEventListener('input', updateTextSizeValue);
+            faceXSlider.addEventListener('input', updateFaceXValue);
+            faceYSlider.addEventListener('input', updateFaceYValue);
+            generateMemeBtn.addEventListener('click', generateMeme);
+            addFaceBtn.addEventListener('click', addFaceToMeme);
+            downloadMemeBtn.addEventListener('click', downloadMeme);
+            addToGalleryBtn.addEventListener('click', addMemeToGallery);
+            activateProtectionBtn.addEventListener('click', activateProtection);
+            closeModalBtn.addEventListener('click', closeModal);
+            
+            // Cerrar modal al hacer clic fuera
+            imageModal.addEventListener('click', function(e) {
+                if (e.target === imageModal) {
+                    closeModal();
+                }
+            });
+            
+            // Crear efectos de chispas al hacer clic
+            document.addEventListener('click', createSparkleEffect);
+            
+            // Inicializar valores de los controles
+            updateTextSizeValue();
+            updateFaceXValue();
+            updateFaceYValue();
+            
+            // Cargar imágenes por defecto
+            loadDefaultImages();
+            
+            // Función para guardar la API Key
+            function saveApiKey() {
+                const key = apiKeyInput.value.trim();
+                if (key && !key.includes("••••••••••••••••••")) {
+                    apiKey = key;
+                    localStorage.setItem('sebastishop_api_key', key);
+                    showNotification("API Key guardada exitosamente", "success");
+                    apiKeyInput.value = "••••••••••••••••••";
+                    
+                    // Simular carga de imágenes desde API
+                    setTimeout(() => {
+                        showNotification("Conectando a la API de imágenes...", "info");
+                        setTimeout(() => {
+                            showNotification("¡Conexión exitosa! Cargando imágenes populares...", "success");
+                            loadDefaultImages();
+                        }, 1000);
+                    }, 500);
+                } else if (savedApiKey) {
+                    showNotification("Ya hay una API Key guardada. Para cambiarla, ingresa una nueva.", "info");
+                } else {
+                    showNotification("Por favor ingresa una API Key válida", "error");
+                }
+            }
+            
+            // Función para cargar imágenes por defecto
+            function loadDefaultImages() {
+                // Simular carga desde API con imágenes por defecto
+                showNotification("Cargando imágenes populares...", "info");
+                
+                // Imágenes por defecto (simulando respuesta de API)
+                const defaultImages = [
+                    { id: 1, url: "https://images.unsplash.com/photo-1611605698323-b1e99cfd37ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80", title: "Perro con lentes", description: "Un perro con estilo", category: "popular", hasFace: false },
+                    { id: 2, url: "https://images.unsplash.com/photo-1541367777708-7905fe3296c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80", title: "Gato sorprendido", description: "Cuando ves el precio de la comida", category: "meme", hasFace: true },
+                    { id: 3, url: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80", title: "Paisaje surreal", description: "Para cuando sales de viaje", category: "popular", hasFace: false },
+                    { id: 4, url: "https://images.unsplash.com/photo-1550684841-f1c6f8b6c7b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80", title: "Retrato artístico", description: "Mi foto personal favorita", category: "personal", hasFace: true },
+                    { id: 5, url: "https://images.unsplash.com/photo-1574169208507-84376144848b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80", title: "Meme de oficina", description: "Cuando trabajas desde casa", category: "meme", hasFace: true },
+                    { id: 6, url: "https://images.unsplash.com/photo-1563089145-599997674d42?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80", title: "Ciudad nocturna", description: "Foto de mi último viaje", category: "personal", hasFace: false },
+                    { id: 7, url: "https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80", title: "Expresión cómica", description: "Para cuando alguien dice algo obvio", category: "meme", hasFace: true },
+                    { id: 8, url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80", title: "Meditación", description: "Cuando necesitas paz mental", category: "popular", hasFace: false },
+                    { id: 9, url: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80", title: "Gato con traje", description: "Para ocasiones formales", category: "meme", hasFace: true },
+                    { id: 10, url: "https://images.unsplash.com/photo-1518843025960-d60217f226f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80", title: "Arte abstracto", description: "Mi creación personal", category: "personal", hasFace: false }
+                ];
+                
+                // Añadir las imágenes por defecto a la galería
+                images = [...defaultImages];
+                renderGallery();
+                
+                // Mostrar notificación de éxito
+                setTimeout(() => {
+                    showNotification(`¡${defaultImages.length} imágenes cargadas exitosamente!`, "success");
+                }, 800);
+            }
+            
+            // Función para limpiar la galería
+            function clearGallery() {
+                if (confirm("¿Estás seguro de que quieres limpiar toda la galería? Esta acción no se puede deshacer.")) {
+                    images = [];
+                    renderGallery();
+                    showNotification("Galería limpiada exitosamente", "success");
+                }
+            }
+            
+            // Función para manejar la subida de imágenes
+            function handleImageUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                if (!file.type.match('image.*')) {
+                    showNotification("Por favor selecciona un archivo de imagen válido", "error");
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    uploadedImage = e.target.result;
+                    
+                    // Crear objeto para la imagen subida
+                    const newImage = {
+                        id: images.length + 1,
+                        url: e.target.result,
+                        title: `Mi foto ${images.length + 1}`,
+                        description: "Foto personal subida por mí",
+                        category: "personal",
+                        hasFace: false
+                    };
+                    
+                    images.unshift(newImage);
+                    renderGallery();
+                    showNotification("¡Foto subida exitosamente a tu galería personal!", "success");
+                    
+                    // Configurar como imagen para el editor de memes
+                    setTimeout(() => {
+                        const ctx = memeCanvas.getContext('2d');
+                        const img = new Image();
+                        img.onload = function() {
+                            ctx.clearRect(0, 0, memeCanvas.width, memeCanvas.height);
+                            ctx.drawImage(img, 0, 0, memeCanvas.width, memeCanvas.height);
+                            showNotification("Imagen lista para convertir en meme", "info");
+                        };
+                        img.src = e.target.result;
+                    }, 500);
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            // Función para renderizar la galería
+            function renderGallery() {
+                gallery.innerHTML = '';
+                
+                // Filtrar imágenes según el filtro activo
+                let filteredImages = images;
+                if (currentFilter !== 'all') {
+                    filteredImages = images.filter(img => {
+                        if (currentFilter === 'face') return img.hasFace;
+                        return img.category === currentFilter;
+                    });
+                }
+                
+                if (filteredImages.length === 0) {
+                    gallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #888; font-size: 1.2rem;">No hay imágenes en esta categoría. ¡Sube algunas fotos o carga imágenes populares!</div>';
+                    return;
+                }
+                
+                filteredImages.forEach(img => {
+                    const galleryItem = document.createElement('div');
+                    galleryItem.className = 'gallery-item';
+                    galleryItem.dataset.id = img.id;
+                    
+                    let badge = '';
+                    if (img.category === 'personal') {
+                        badge = '<span class="badge"><i class="fas fa-user"></i> Personal</span>';
+                    } else if (img.category === 'meme') {
+                        badge = '<span class="badge"><i class="fas fa-laugh"></i> Meme</span>';
+                    } else if (img.category === 'popular') {
+                        badge = '<span class="badge"><i class="fas fa-fire"></i> Popular</span>';
+                    }
+                    
+                    galleryItem.innerHTML = `
+                        <img src="${img.url}" alt="${img.title}" class="gallery-img">
+                        ${badge}
+                        <div class="gallery-item-overlay">
+                            <h3 class="gallery-item-title">${img.title}</h3>
+                            <p class="gallery-item-desc">${img.description}</p>
+                            <div class="gallery-item-actions">
+                                <button class="btn btn-primary use-for-meme" data-id="${img.id}">
+                                    <i class="fas fa-magic"></i> Usar para Meme
+                                </button>
+                                <button class="btn btn-secondary view-image" data-id="${img.id}">
+                                    <i class="fas fa-expand"></i> Ver
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    gallery.appendChild(galleryItem);
+                });
+                
+                // Agregar eventos a los botones de las imágenes
+                document.querySelectorAll('.use
